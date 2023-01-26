@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: price-fetcher-service
+server:
+  port: 8501
