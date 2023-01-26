@@ -7,6 +7,7 @@ import com.devinho.pricefetcher.model.dto.Products;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,7 +19,8 @@ import java.util.Map;
 @Slf4j
 class AmazonFetcher {
 
-    private static final Map<String, String> COOKIES = Map.of("session-id", "260-1593237-1676605");
+    @Value("${amazon-config.session-id}")
+    private String sessionId;
 
     public Products fetchProductsPricing(List<String> amazonUrls) {
         log.info("Fetching Amazon prices for {} products", amazonUrls.size());
@@ -26,9 +28,8 @@ class AmazonFetcher {
         for (String url : amazonUrls) {
             var document = getMainDocument(url);
             var brand = getBrand(document);
-            var model = getModel(document);
             var price = getPrice(document);
-            products.add(new Product(brand, model, price, url));
+            products.add(new Product(brand, price, url));
         }
         return new Products(products);
     }
@@ -36,7 +37,7 @@ class AmazonFetcher {
     private Document getMainDocument(String url) {
         try {
             return Jsoup.connect(url)
-                    .cookies(COOKIES)
+                    .cookie("session-id", sessionId)
                     .get();
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
@@ -50,20 +51,6 @@ class AmazonFetcher {
             return "";
         } else {
             return brandElements.get(0)
-                    .getElementsByTag("td")
-                    .get(1)
-                    .getElementsByTag("span")
-                    .text();
-        }
-    }
-
-    private String getModel(Document document) {
-        var modelElements = document.getElementsByClass("a-spacing-small po-model_name");
-        if (modelElements.isEmpty()) {
-            System.err.println("Unable to establish BRAND NAME for given product");
-            return "";
-        } else {
-            return modelElements.get(0)
                     .getElementsByTag("td")
                     .get(1)
                     .getElementsByTag("span")

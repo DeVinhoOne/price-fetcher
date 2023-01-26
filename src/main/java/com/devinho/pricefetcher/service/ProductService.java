@@ -17,7 +17,8 @@ public class ProductService {
 
     public Products getAmazonProductsPricing(ProductUrls productUrls) {
         switch (productUrls.getEcommerce()) {
-            case AMAZON -> amazonFetcher.fetchProductsPricing(productUrls.getUrls());
+            case AMAZON:
+                return amazonFetcher.fetchProductsPricing(productUrls.getUrls());
         }
         return new Products(Collections.emptyList());
     }

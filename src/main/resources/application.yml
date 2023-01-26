@@ -3,3 +3,6 @@ spring:
     name: price-fetcher-service
 server:
   port: 8501
+
+amazon-config:
+  session-id: 260-1593237-1676605
