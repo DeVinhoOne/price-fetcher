@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  price-fetcher-db:
+    image: postgres:${PRICE_FETCHER_DB_IMAGE_VERSION}
+    restart: always
+    environment:
+      POSTGRES_USER: ${PRICE_FETCHER_DB_USER}
+      POSTGRES_PASSWORD: ${PRICE_FETCHER_DB_PASSWORD}
+      POSTGRES_DB: ${PRICE_FETCHER_DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - price-fetcher-db-volume:${PRICE_FETCHER_VOLUME_MOUNTPOINT}
+
+volumes:
+  price-fetcher-db-volume:
+    driver: local
