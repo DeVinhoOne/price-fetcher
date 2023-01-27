@@ -3,6 +3,7 @@ package com.devinho.pricefetcher.service;
 import com.devinho.pricefetcher.model.dto.ScrapedProductDto;
 import com.devinho.pricefetcher.model.entity.EmailAlert;
 import com.devinho.pricefetcher.repository.EmailAlertRepository;
+import com.devinho.pricefetcher.service.fetcher.AmazonFetcher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

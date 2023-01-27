@@ -1,4 +1,4 @@
-package com.devinho.pricefetcher.service;
+package com.devinho.pricefetcher.service.fetcher;
 
 import com.devinho.pricefetcher.model.dto.Currency;
 import com.devinho.pricefetcher.model.dto.Price;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-class AmazonFetcher {
+public class AmazonFetcher {
 
     @Value("${amazon-config.session-id}")
     private String sessionId;
