@@ -4,6 +4,7 @@ import com.devinho.pricefetcher.model.dto.Currency;
 import com.devinho.pricefetcher.model.dto.Price;
 import com.devinho.pricefetcher.model.dto.Product;
 import com.devinho.pricefetcher.model.dto.Products;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
