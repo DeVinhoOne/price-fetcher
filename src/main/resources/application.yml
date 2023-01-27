@@ -9,8 +9,13 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+  sendgrid:
+    api-key: ${PRICE_FETCHER_SENDGRID_API_KEY}
 server:
   port: 8501
 
 amazon-config:
   session-id: ${AMAZON_SESSION_ID}
+
+sendgrid-config:
+  from: ${SENDGRID_FROM}
