@@ -1,6 +1,14 @@
 spring:
   application:
     name: price-fetcher-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${PRICE_FETCHER_DB_NAME}
+    username: ${PRICE_FETCHER_DB_USER}
+    password: ${PRICE_FETCHER_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
 server:
   port: 8501
 
