@@ -18,12 +18,11 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Slf4j
 public class CronService {
-
     private final AmazonFetcher amazonFetcher;
     private final EmailAlertRepository emailAlertRepository;
     private final ScrapedProductRecordService scrapedProductRecordService;
 
-    @Scheduled(fixedRate = 60_000)
+    @Scheduled(fixedRate = 1_200_000)
     @Async
     @Transactional //TODO 2. I think it can't be transactional
     public void run() {

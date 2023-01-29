@@ -1,13 +1,23 @@
 version: '3.8'
 
 services:
+  price-fetcher:
+    image: price-fetcher:${PRICE_FETCHER_IMAGE_VERSION}
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://price-fetcher-db:5432/${PRICE_FETCHER_DB_NAME}
+    ports:
+      - '8501:8501'
+    depends_on:
+      - price-fetcher-db
+
   price-fetcher-db:
     image: postgres:${PRICE_FETCHER_DB_IMAGE_VERSION}
     restart: always
-    environment:
-      POSTGRES_USER: ${PRICE_FETCHER_DB_USER}
-      POSTGRES_PASSWORD: ${PRICE_FETCHER_DB_PASSWORD}
-      POSTGRES_DB: ${PRICE_FETCHER_DB_NAME}
+    env_file:
+      - .env
     ports:
       - '5432:5432'
     volumes:
