@@ -18,6 +18,10 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      POSTGRES_USER: ${PRICE_FETCHER_DB_USER}
+      POSTGRES_PASSWORD: ${PRICE_FETCHER_DB_PASSWORD}
+      POSTGRES_DB: ${PRICE_FETCHER_DB_NAME}
     ports:
       - '5432:5432'
     volumes:
