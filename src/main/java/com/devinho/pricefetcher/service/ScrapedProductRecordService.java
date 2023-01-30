@@ -34,7 +34,7 @@ public class ScrapedProductRecordService {
         newEntity.setUpdatedAt(currentDateTime);
         var savedEntity = scrapedProductRecordRepository.save(newEntity);
         log.info("Save entity ScrapedProductRecord [id: {}]", savedEntity.getId());
-//        emailService.send(emailAlert, scrapedProductDto); //TODO remove it
+        emailService.send(emailAlert, scrapedProductDto); //TODO remove it
     }
 
     private void updateExistingProductRecord(ScrapedProductRecord entity, ScrapedProductDto dto, EmailAlert emailAlert) {
