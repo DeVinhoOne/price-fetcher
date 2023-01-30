@@ -1,5 +1,6 @@
 package com.devinho.pricefetcher.service;
 
+import com.devinho.pricefetcher.mapper.ScrapedProductRecordMapper;
 import com.devinho.pricefetcher.model.dto.ScrapedProductDto;
 import com.devinho.pricefetcher.model.entity.EmailAlert;
 import com.devinho.pricefetcher.model.entity.ScrapedProductRecord;
@@ -26,24 +27,23 @@ public class ScrapedProductRecordService {
     }
 
     private void saveNewScrapedProductRecord(ScrapedProductDto scrapedProductDto, EmailAlert emailAlert) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        var newEntity = new ScrapedProductRecord();
-        newEntity.setLastPrice(scrapedProductDto.price().value());
-        newEntity.setCurrency(scrapedProductDto.price().currency());
+        var currentDateTime = LocalDateTime.now();
+        var newEntity = ScrapedProductRecordMapper.mapScrapedProductDtoToScrapedProductRecord(scrapedProductDto);
         newEntity.setEmailAlert(emailAlert);
         newEntity.setCreatedAt(currentDateTime);
         newEntity.setUpdatedAt(currentDateTime);
         var savedEntity = scrapedProductRecordRepository.save(newEntity);
-        log.info("Save entity {}", savedEntity);
-        emailService.send(emailAlert, scrapedProductDto); //TODO remove it
+        log.info("Save entity ScrapedProductRecord [id: {}]", savedEntity.getId());
+//        emailService.send(emailAlert, scrapedProductDto); //TODO remove it
     }
 
-    private void updateExistingProductRecord(ScrapedProductRecord scrapedProductRecord, ScrapedProductDto scrapedProductDto, EmailAlert emailAlert) {
-        if (Objects.equals(scrapedProductRecord.getLastPrice(), scrapedProductDto.price().value())) return;
-        log.info("Price change, entity update [oldPrice: {}, newPrice: {}]", scrapedProductRecord.getLastPrice(), scrapedProductDto.price().value());
-        scrapedProductRecord.setLastPrice(scrapedProductDto.price().value());
-        scrapedProductRecord.setUpdatedAt(LocalDateTime.now());
-        scrapedProductRecordRepository.save(scrapedProductRecord);
-        emailService.send(emailAlert, scrapedProductDto);
+    private void updateExistingProductRecord(ScrapedProductRecord entity, ScrapedProductDto dto, EmailAlert emailAlert) {
+        if (Objects.equals(entity.getLastPrice(), dto.price().value())) return;
+        log.info("Price change, entity update ScrapedProductRecord [id: {}, oldPrice: {}, newPrice: {}]",
+                entity.getId(), entity.getLastPrice(), dto.price().value());
+        entity.setLastPrice(dto.price().value());
+        entity.setUpdatedAt(LocalDateTime.now());
+        scrapedProductRecordRepository.save(entity);
+        emailService.send(emailAlert, dto);
     }
 }
