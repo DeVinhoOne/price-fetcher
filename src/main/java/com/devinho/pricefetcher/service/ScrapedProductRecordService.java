@@ -35,15 +35,15 @@ public class ScrapedProductRecordService {
         newEntity.setUpdatedAt(currentDateTime);
         var savedEntity = scrapedProductRecordRepository.save(newEntity);
         log.info("Save entity {}", savedEntity);
-        emailService.send(emailAlert, scrapedProductDto);
+        emailService.send(emailAlert, scrapedProductDto); //TODO remove it
     }
 
     private void updateExistingProductRecord(ScrapedProductRecord scrapedProductRecord, ScrapedProductDto scrapedProductDto, EmailAlert emailAlert) {
         if (Objects.equals(scrapedProductRecord.getLastPrice(), scrapedProductDto.price().value())) return;
+        log.info("Price change, entity update [oldPrice: {}, newPrice: {}]", scrapedProductRecord.getLastPrice(), scrapedProductDto.price().value());
         scrapedProductRecord.setLastPrice(scrapedProductDto.price().value());
         scrapedProductRecord.setUpdatedAt(LocalDateTime.now());
         scrapedProductRecordRepository.save(scrapedProductRecord);
-        log.info("Price change, entity update [oldPrice: {}, newPrice: {}]", scrapedProductRecord.getLastPrice(), scrapedProductDto.price().value());
         emailService.send(emailAlert, scrapedProductDto);
     }
 }
