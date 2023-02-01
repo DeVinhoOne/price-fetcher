@@ -1,6 +1,7 @@
 package com.devinho.pricefetcher.repository;
 
 import com.devinho.pricefetcher.model.dto.alert.EmailAlertDto;
+import com.devinho.pricefetcher.model.dto.alert.EmailAlertRetrievalDto;
 import com.devinho.pricefetcher.model.entity.EmailAlert;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,4 +27,6 @@ public interface EmailAlertRepository extends CrudRepository<EmailAlert, UUID> {
             WHERE e.alertId = ?1
             """)
     void updateLastAlertSentAtById(UUID emailAlertId, LocalDateTime lastAlertSentAt);
+
+    List<EmailAlertRetrievalDto> getEmailAlertsByEmail(String email);
 }
