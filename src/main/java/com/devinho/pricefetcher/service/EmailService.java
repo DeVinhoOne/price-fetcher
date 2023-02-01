@@ -52,10 +52,11 @@ public class EmailService {
         var from = new Email(fromEmail);
         var to = new Email(emailAlertDto.email());
         var subject = String.format(emailSubjectPattern, emailAlertDto.alertName());
+        var currency = price.currency().value;
         var strContent = String.format(emailContentPattern,
                 emailAlertDto.alertName(),
-                oldPrice,
-                price.value() + price.currency().value,
+                oldPrice + currency,
+                price.value() + currency,
                 scrapedProductDto.url());
         var content = new Content(CONTENT_TYPE, strContent);
         return new Mail(from, subject, to, content);
