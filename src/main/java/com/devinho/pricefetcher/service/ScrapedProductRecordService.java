@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class ScrapedProductRecordService {
 
     private void saveNewScrapedProductRecord(ScrapedProductDto scrapedProductDto, EmailAlertDto emailAlertDto) {
         var currentDateTime = LocalDateTime.now();
-        Optional<EmailAlert> emailAlertOpt = emailAlertRepository.findById(emailAlertDto.alertId());
+        var emailAlertOpt = emailAlertRepository.findById(emailAlertDto.alertId());
         var emailAlertEntity = emailAlertOpt.orElseThrow(
                 () -> new RuntimeException("Unable to find EmailAlert [id: {" + emailAlertDto.alertId() + "}]"));
         var newScrapedProductRecordEntity = ScrapedProductRecordMapper
@@ -59,5 +58,6 @@ public class ScrapedProductRecordService {
         existingEntity.setUpdatedAt(LocalDateTime.now());
         scrapedProductRecordRepository.save(existingEntity);
         LocalDateTime sentAt = emailService.send(emailAlertDto, newScrapedProductData, oldPrice);
+        emailAlertRepository.updateLastAlertSentAtById(emailAlertDto.alertId(), sentAt);
     }
 }
