@@ -3,7 +3,6 @@ package com.devinho.pricefetcher.service;
 import com.devinho.pricefetcher.mapper.ScrapedProductRecordMapper;
 import com.devinho.pricefetcher.model.dto.ScrapedProductDto;
 import com.devinho.pricefetcher.model.dto.alert.EmailAlertDto;
-import com.devinho.pricefetcher.model.entity.EmailAlert;
 import com.devinho.pricefetcher.model.entity.ScrapedProductRecord;
 import com.devinho.pricefetcher.repository.EmailAlertRepository;
 import com.devinho.pricefetcher.repository.ScrapedProductRecordRepository;
@@ -57,7 +56,7 @@ public class ScrapedProductRecordService {
         existingEntity.setLastPrice(newScrapedProductData.price().value());
         existingEntity.setUpdatedAt(LocalDateTime.now());
         scrapedProductRecordRepository.save(existingEntity);
-        LocalDateTime sentAt = emailService.send(emailAlertDto, newScrapedProductData, oldPrice);
+        LocalDateTime sentAt = emailService.sendEmailWithPriceChangeInfo(emailAlertDto, newScrapedProductData, oldPrice);
         emailAlertRepository.updateLastAlertSentAtById(emailAlertDto.alertId(), sentAt);
     }
 }

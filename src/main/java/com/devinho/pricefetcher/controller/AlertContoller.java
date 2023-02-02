@@ -1,6 +1,6 @@
 package com.devinho.pricefetcher.controller;
 
-import com.devinho.pricefetcher.model.dto.alert.CreateEmailAlertDto;
+import com.devinho.pricefetcher.model.dto.alert.EmailAlertCreationDto;
 import com.devinho.pricefetcher.model.dto.alert.CreateEmailAlertResponseDto;
 import com.devinho.pricefetcher.service.EmailAlertService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class AlertContoller {
     private final EmailAlertService emailAlertService;
 
     @PostMapping("/create") //TODO 1. Add validation
-    public CreateEmailAlertResponseDto createNewEmailAlert(@RequestBody CreateEmailAlertDto dto) {
+    public CreateEmailAlertResponseDto createNewEmailAlert(@RequestBody EmailAlertCreationDto dto) {
         return emailAlertService.createNewEmailAlert(dto);
     }
 
