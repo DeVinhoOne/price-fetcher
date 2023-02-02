@@ -1,7 +1,7 @@
 package com.devinho.pricefetcher.service;
 
 import com.devinho.pricefetcher.mapper.EmailAlertMapper;
-import com.devinho.pricefetcher.model.dto.alert.CreateEmailAlertDto;
+import com.devinho.pricefetcher.model.dto.alert.EmailAlertCreationDto;
 import com.devinho.pricefetcher.model.dto.alert.CreateEmailAlertResponseDto;
 import com.devinho.pricefetcher.model.dto.alert.EmailAlertRetrievalDto;
 import com.devinho.pricefetcher.repository.EmailAlertRepository;
@@ -17,12 +17,14 @@ import java.util.List;
 public class EmailAlertService {
 
     private final EmailAlertRepository emailAlertRepository;
+    private final EmailService emailService;
 
-    public CreateEmailAlertResponseDto createNewEmailAlert(CreateEmailAlertDto dto) {
-        log.info(dto.toString());
+    public CreateEmailAlertResponseDto createNewEmailAlert(EmailAlertCreationDto dto) {
         var emailAlert = EmailAlertMapper.mapCreateEmailAlertDtoToEntity(dto);
         var savedEmailAlert = emailAlertRepository.save(emailAlert);
         log.info("Saved email alert [alertId: {}]", savedEmailAlert.getAlertId());
+        var emailAlertDto = EmailAlertMapper.mapEntityToEmailAlertDto(savedEmailAlert);
+        emailService.sendEmailWithAlertCreateConfirmation(emailAlertDto);
         return EmailAlertMapper.mapEntityToCreateEmailAlertResponseDto(savedEmailAlert);
     }
 
