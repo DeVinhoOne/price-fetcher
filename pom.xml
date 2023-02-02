@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.devinho</groupId>
     <artifactId>price-fetcher</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.4</version>
     <name>price-fetcher</name>
     <description>price-fetcher</description>
     <properties>
