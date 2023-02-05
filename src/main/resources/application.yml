@@ -14,8 +14,15 @@ spring:
 server:
   port: 8501
 
+security-config:
+  api-key-header: api-key
+  api-key-value: ${API-KEY-VALUE}
+
 amazon-config:
   session-id: ${AMAZON_SESSION_ID}
 
 sendgrid-config:
   from: ${SENDGRID_FROM}
+
+scheduler:
+  enabled: false
