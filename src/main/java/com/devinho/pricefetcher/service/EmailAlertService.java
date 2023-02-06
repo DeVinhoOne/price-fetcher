@@ -28,13 +28,13 @@ public class EmailAlertService {
         return EmailAlertMapper.mapEntityToCreateEmailAlertResponseDto(savedEmailAlert);
     }
 
-    public Query getAlertsByEmail(String email) {
+    public Result getAlertsByEmail(String email) {
         List<EmailAlertRetrievalDto> emailAlertDtos = emailAlertRepository.getEmailAlertsByEmail(email);
         log.info("Retrieved email alerts [e-mail: {}, count: {}]", email, emailAlertDtos.size());
-        return new Query(emailAlertDtos);
+        return new Result(emailAlertDtos);
     }
 
-    public record Query(List<EmailAlertRetrievalDto> emailAlerts) {}
+    public record Result(List<EmailAlertRetrievalDto> emailAlerts) {}
 }
 
 

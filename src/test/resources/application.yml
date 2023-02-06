@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: test
+    password: test
+  sendgrid:
+    api-key: ${PRICE_FETCHER_SENDGRID_API_KEY}
+
+sendgrid-config:
+  from: ${SENDGRID_FROM}
+
+security-config:
+  api-key-header: api-key
+  api-key-value: ${API-KEY-VALUE}
+
+amazon-config:
+  session-id: ${AMAZON_SESSION_ID}
+
+# Disable all cron jobs during tests
+scheduler:
+  enabled: false

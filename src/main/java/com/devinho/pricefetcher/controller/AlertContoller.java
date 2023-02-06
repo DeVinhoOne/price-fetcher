@@ -21,7 +21,7 @@ public class AlertContoller {
     }
 
     @GetMapping("/")
-    public Query getAlertsByEmail(@RequestHeader String email) {
+    public Result getAlertsByEmail(@RequestHeader String email) {
         return emailAlertService.getAlertsByEmail(email);
     }
 }
