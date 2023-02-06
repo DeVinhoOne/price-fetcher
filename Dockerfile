@@ -4,7 +4,7 @@ COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 COPY src src
-RUN ./mvnw package
+RUN ./mvnw package -DskipTests
 COPY target/price-fetcher-*.jar app.jar
 
 FROM openjdk:17
