@@ -15,7 +15,7 @@ server:
   port: 8501
 
 security-config:
-  api-key-header: api-key
+  api-key-header: ${API-KEY-HEADER}
   api-key-value: ${API-KEY-VALUE}
 
 amazon-config:
