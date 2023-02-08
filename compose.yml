@@ -10,6 +10,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://price-fetcher-db:5432/${PRICE_FETCHER_DB_NAME}
     ports:
       - '8501:8501'
+    networks:
+      - price-fetcher
     depends_on:
       - price-fetcher-db
 
@@ -24,9 +26,14 @@ services:
       POSTGRES_DB: ${PRICE_FETCHER_DB_NAME}
     ports:
       - '5432:5432'
+    networks:
+      - price-fetcher
     volumes:
       - price-fetcher-db-volume:${PRICE_FETCHER_VOLUME_MOUNTPOINT}
 
 volumes:
   price-fetcher-db-volume:
     driver: local
+
+networks:
+  price-fetcher:
