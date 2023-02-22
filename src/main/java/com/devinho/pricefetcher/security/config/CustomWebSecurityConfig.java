@@ -15,17 +15,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Slf4j
 public class CustomWebSecurityConfig {
 
-    private final ApiKeyFilter apiKeyFilter;
-
     @Value("${security-config.api-key-value}")
-    private String apiKey;
+    private String validApiKey;
+    private final ApiKeyFilter apiKeyFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("Security setup with API-KEY: {}...", apiKey.substring(0, 7));
+        log.info("Security loaded with API-KEY: {}...", validApiKey.substring(0, 7));
         return http
                 .addFilterAt(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests().anyRequest().authenticated()
-                .and().build();
+                .and()
+                .build();
     }
 }
