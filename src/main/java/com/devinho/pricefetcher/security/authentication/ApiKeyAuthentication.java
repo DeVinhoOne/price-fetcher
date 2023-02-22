@@ -14,7 +14,7 @@ import java.util.Collection;
 @Setter
 public class ApiKeyAuthentication implements Authentication {
 
-    private final boolean authentication;
+    private final boolean authenticated;
     private final String headerApiKey;
 
     @Override
@@ -24,7 +24,7 @@ public class ApiKeyAuthentication implements Authentication {
 
     @Override
     public boolean isAuthenticated() {
-        return authentication;
+        return authenticated;
     }
 
     @Override
