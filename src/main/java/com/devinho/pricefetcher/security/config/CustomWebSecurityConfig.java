@@ -26,6 +26,7 @@ public class CustomWebSecurityConfig {
                 .addFilterAt(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests().anyRequest().authenticated()
                 .and()
+                .csrf().disable()
                 .build();
     }
 }
