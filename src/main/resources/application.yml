@@ -23,6 +23,3 @@ amazon-config:
 
 sendgrid-config:
   from: ${SENDGRID_FROM}
-
-scheduler:
-  enabled: false
