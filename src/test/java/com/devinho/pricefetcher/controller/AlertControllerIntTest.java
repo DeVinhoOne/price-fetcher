@@ -25,11 +25,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -37,10 +38,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD) //TODO replace in future (long execution times)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+//TODO replace in future (long execution times)
 public class AlertControllerIntTest {
 
     private static final String TEST_MAIL = "test@mail.com";
+    private static List<EmailAlertCreationDto> emailAlertCreationDtos;
 
     @MockBean
     private EmailService emailService;
@@ -55,13 +58,13 @@ public class AlertControllerIntTest {
     void setup() {
         //DISABLE SENDING AN EMAIL
         doNothing().when(emailService).sendEmailWithAlertCreateConfirmation(any(EmailAlertDto.class));
+        setupEmailAlertCreationDtos();
     }
 
     @Test
     @SneakyThrows
     void whenValidEmailAlertCreate_shouldReturn200() {
         //GIVEN
-        var emailAlertCreationDtos = setupEmailAlertCreationDtos();
         var emailAlertCreateDto = emailAlertCreationDtos.get(0);
         var jsonRequestBody = objectMapper.writeValueAsString(emailAlertCreateDto);
         //WHEN
@@ -78,8 +81,6 @@ public class AlertControllerIntTest {
     @Test
     @SneakyThrows
     void whenThreeEmailAlertsAreCreated_ThenWhenFetchAlertsListContainsThreeElements() {
-        //GIVEN
-        var emailAlertCreationDtos = setupEmailAlertCreationDtos();
         //WHEN
         for (var emailAlertCreationDto : emailAlertCreationDtos) {
             var jsonRequestBody = objectMapper.writeValueAsString(emailAlertCreationDto);
@@ -95,9 +96,56 @@ public class AlertControllerIntTest {
         Assertions.assertEquals(3, emailAlertRetrievalDtos.size());
     }
 
+    @Test
     @SneakyThrows
-    private List<EmailAlertCreationDto> setupEmailAlertCreationDtos() {
-        return List.of(
+    void whenNonexistentAlertDelete_ThenAppropriateErrorReturn() {
+        //WHEN
+        var resultActions = mockMvc.perform(delete("/alerts/delete/{alertId}", UUID.randomUUID()))
+                .andExpect(status().isNotFound());
+        var map = objectMapper.readValue(resultActions.andReturn().getResponse().getContentAsString(), Map.class);
+        //THEN
+        Assertions.assertEquals("AlertNotFoundException", map.get("error"));
+        Assertions.assertEquals("Entity does not exists", map.get("message"));
+    }
+
+    @Test
+    @SneakyThrows
+    void whenCorrectAlertDelete_ThenReturn200AndNoAlertsAvailable() {
+        //GIVEN
+        var emailAlertCreateDto = emailAlertCreationDtos.get(0);
+        var jsonRequestBody = objectMapper.writeValueAsString(emailAlertCreateDto);
+        mockMvc.perform(post("/alerts/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRequestBody));
+        var resultActions = mockMvc.perform(get("/alerts/").header("email", TEST_MAIL));
+        var getAlertsResult = objectMapper
+                .readValue(resultActions.andReturn().getResponse().getContentAsString(), EmailAlertService.Result.class);
+        var createdAlertId = getAlertsResult.emailAlerts().get(0).alertId();
+        //WHEN
+        mockMvc.perform(delete("/alerts/delete/{alertId}", createdAlertId))
+                .andExpect(status().isOk());
+        //THEN
+        var resultActionsAfterDelete = mockMvc.perform(get("/alerts/").header("email", TEST_MAIL));
+        var getAlertsResultAfterDelete = objectMapper
+                .readValue(resultActionsAfterDelete.andReturn().getResponse().getContentAsString(), EmailAlertService.Result.class);
+        Assertions.assertEquals(0, getAlertsResultAfterDelete.emailAlerts().size());
+    }
+
+    @Test
+    @SneakyThrows
+    void whenNotValidUUIDForAlertDelete_ThenAppropriateErrorReturn() {
+        //WHEN
+        var resultActions = mockMvc.perform(delete("/alerts/delete/{alertId}", "THIS-IS-NOT-UUID"))
+                .andExpect(status().isBadRequest());
+        var map = objectMapper.readValue(resultActions.andReturn().getResponse().getContentAsString(), Map.class);
+        //THEN
+        Assertions.assertEquals("GenericPriceFetcherException", map.get("error"));
+        Assertions.assertEquals("Provided ID is not valid UUID", map.get("message"));
+    }
+
+    @SneakyThrows
+    private void setupEmailAlertCreationDtos() {
+        emailAlertCreationDtos = List.of(
                 new EmailAlertCreationDto(
                         "New alert name 1",
                         "New alert description 1",

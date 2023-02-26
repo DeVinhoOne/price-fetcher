@@ -36,4 +36,7 @@ public class EmailAlert {
     @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private SupportedEcommerce ecommerce;
+
+    @OneToOne(mappedBy = "emailAlert", cascade = CascadeType.REMOVE)
+    private ScrapedProductRecord scrapedProductRecord;
 }
