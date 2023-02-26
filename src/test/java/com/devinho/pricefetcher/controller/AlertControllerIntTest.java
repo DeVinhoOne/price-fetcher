@@ -25,11 +25,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -93,6 +94,19 @@ public class AlertControllerIntTest {
         List<EmailAlertRetrievalDto> emailAlertRetrievalDtos = result.emailAlerts();
         //THEN
         Assertions.assertEquals(3, emailAlertRetrievalDtos.size());
+    }
+
+    @Test
+    @SneakyThrows
+    void whenNonexistentAlertDelete_ThenAppropriateErrorReturn() {
+        //WHEN
+        var resultActions = mockMvc.perform(delete("/alerts/delete/{alertId}", UUID.randomUUID()))
+                .andExpect(status().isNotFound());
+        var map = objectMapper.readValue(resultActions.andReturn().getResponse().getContentAsString(), Map.class);
+        System.out.println(map);
+        //THEN
+        Assertions.assertEquals("AlertNotFoundException", map.get("error"));
+        Assertions.assertEquals("Entity does not exists", map.get("message"));
     }
 
     @SneakyThrows
