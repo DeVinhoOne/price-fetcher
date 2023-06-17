@@ -1,8 +1,7 @@
 package com.devinho.pricefetcher.mapper;
 
 import com.devinho.pricefetcher.model.SupportedEcommerce;
-import com.devinho.pricefetcher.model.dto.alert.CreateEmailAlertDto;
-import com.devinho.pricefetcher.model.dto.alert.CreateEmailAlertResponseDto;
+import com.devinho.pricefetcher.model.dto.alert.EmailAlertCreationDto;
 import com.devinho.pricefetcher.model.entity.EmailAlert;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ class EmailAlertMapperTest {
         var email = "pricefetcher@test.com";
         var productUrl = new URL("https://google.com/");
         var ecommerce = SupportedEcommerce.AMAZON;
-        var dto = new CreateEmailAlertDto(alertName, alertDescription, email, productUrl, ecommerce);
+        var dto = new EmailAlertCreationDto(alertName, alertDescription, email, productUrl, ecommerce);
         var entity = EmailAlertMapper.mapCreateEmailAlertDtoToEntity(dto);
         assertEquals(alertName, entity.getAlertName());
         assertEquals(alertDescription, entity.getAlertDescription());
