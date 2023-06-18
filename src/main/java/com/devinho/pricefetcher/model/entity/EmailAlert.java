@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -37,6 +38,6 @@ public class EmailAlert {
     @Enumerated(EnumType.STRING)
     private SupportedEcommerce ecommerce;
 
-    @OneToOne(mappedBy = "emailAlert", cascade = CascadeType.REMOVE)
-    private ScrapedProductRecord scrapedProductRecord;
+    @OneToMany(mappedBy = "emailAlert", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ScrapedProductRecord> scrapedProductRecords;
 }

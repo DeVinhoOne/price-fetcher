@@ -12,9 +12,9 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ScrapedProductRecord {
-
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID recordId;
 
     @Column(nullable = false)
     private Double lastPrice;
@@ -24,13 +24,9 @@ public class ScrapedProductRecord {
     private Currency currency;
 
     @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_alert_id")
     private EmailAlert emailAlert;
 }
