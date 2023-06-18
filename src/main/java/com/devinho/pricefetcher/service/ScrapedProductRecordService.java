@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +24,11 @@ public class ScrapedProductRecordService {
     private final EmailService emailService;
 
     @Transactional
-    public void saveNewProductData(ScrapedProductDto newScrapedProductData, com.devinho.pricefetcher.model.dto.alert.EmailAlertDto emailAlertDto) {
-        var scrapedProductRecordOpt = scrapedProductRecordRepository.findById(emailAlertDto.alertId());
-        if (scrapedProductRecordOpt.isEmpty()) saveNewScrapedProductRecord(newScrapedProductData, emailAlertDto);
-        else updateExistingProductRecord(scrapedProductRecordOpt.get(), newScrapedProductData, emailAlertDto);
+    public void saveNewProductData(ScrapedProductDto newProductData, EmailAlertDto emailAlertDto) {
+        Optional<ScrapedProductRecord> existingProductData = scrapedProductRecordRepository.findLatestByEmailAlertId(emailAlertDto.alertId());
+        saveNewScrapedProductRecord(newProductData, emailAlertDto);
+        existingProductData
+                .ifPresent(scrapedProductRecord -> checkIfAlertShouldBeSent(scrapedProductRecord, newProductData, emailAlertDto));
     }
 
     private void saveNewScrapedProductRecord(ScrapedProductDto scrapedProductDto, EmailAlertDto emailAlertDto) {
@@ -37,26 +38,14 @@ public class ScrapedProductRecordService {
                 () -> new RuntimeException("Unable to find EmailAlert [id: {" + emailAlertDto.alertId() + "}]"));
         var newScrapedProductRecordEntity = ScrapedProductRecordMapper
                 .mapScrapedProductDtoToScrapedProductRecord(scrapedProductDto);
-
         newScrapedProductRecordEntity.setEmailAlert(emailAlertEntity);
         newScrapedProductRecordEntity.setCreatedAt(currentDateTime);
-        newScrapedProductRecordEntity.setUpdatedAt(currentDateTime);
-
         var savedEntity = scrapedProductRecordRepository.save(newScrapedProductRecordEntity);
-        log.info("Save entity ScrapedProductRecord [id: {}]", savedEntity.getId());
+        log.info("Save entity ScrapedProductRecord [id: {}]", savedEntity.getRecordId());
     }
 
-    private void updateExistingProductRecord(ScrapedProductRecord existingEntity,
-                                             ScrapedProductDto newScrapedProductData,
-                                             EmailAlertDto emailAlertDto) {
-        if (Objects.equals(existingEntity.getLastPrice(), newScrapedProductData.price().value())) return;
-        var oldPrice = existingEntity.getLastPrice();
-        log.info("Price change, entity update ScrapedProductRecord [id: {}, oldPrice: {}, newPrice: {}]",
-                existingEntity.getId(), oldPrice, newScrapedProductData.price().value());
-        existingEntity.setLastPrice(newScrapedProductData.price().value());
-        existingEntity.setUpdatedAt(LocalDateTime.now());
-        scrapedProductRecordRepository.save(existingEntity);
-        LocalDateTime sentAt = emailService.sendEmailWithPriceChangeInfo(emailAlertDto, newScrapedProductData, oldPrice);
-        emailAlertRepository.updateLastAlertSentAtById(emailAlertDto.alertId(), sentAt);
+    private void checkIfAlertShouldBeSent(ScrapedProductRecord existingLatestProductData, ScrapedProductDto newProductData, EmailAlertDto emailAlertDto) {
+        if (newProductData.price().value() < existingLatestProductData.getLastPrice())
+            emailService.sendEmailWithPriceChangeInfo(emailAlertDto, newProductData, existingLatestProductData.getLastPrice());
     }
 }

@@ -1,5 +1,6 @@
-package com.devinho.pricefetcher.mapper;
+package com.devinho.pricefetcher.unit.mapper;
 
+import com.devinho.pricefetcher.mapper.EmailAlertMapper;
 import com.devinho.pricefetcher.model.SupportedEcommerce;
 import com.devinho.pricefetcher.model.dto.alert.EmailAlertCreationDto;
 import com.devinho.pricefetcher.model.entity.EmailAlert;

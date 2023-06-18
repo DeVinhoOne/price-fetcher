@@ -1,4 +1,4 @@
-package com.devinho.pricefetcher.controller;
+package com.devinho.pricefetcher.integration.controller;
 
 import com.devinho.pricefetcher.model.SupportedEcommerce;
 import com.devinho.pricefetcher.model.dto.alert.CreateEmailAlertResponseDto;

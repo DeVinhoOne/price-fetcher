@@ -1,5 +1,6 @@
-package com.devinho.pricefetcher.mapper;
+package com.devinho.pricefetcher.unit.mapper;
 
+import com.devinho.pricefetcher.mapper.ScrapedProductRecordMapper;
 import com.devinho.pricefetcher.model.dto.Currency;
 import com.devinho.pricefetcher.model.dto.Price;
 import com.devinho.pricefetcher.model.dto.ScrapedProductDto;

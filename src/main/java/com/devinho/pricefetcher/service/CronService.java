@@ -34,15 +34,15 @@ public class CronService {
         log.info("[CRON] Duration: {} seconds", cronDurationInSeconds);
     }
 
-    private void getPriceForSingleAlert(EmailAlertDto dto) {
-        ScrapedProductDto scrapedProductDto = switch (dto.ecommerce()) {
+    private void getPriceForSingleAlert(EmailAlertDto emailAlertDto) {
+        ScrapedProductDto scrapedProductDto = switch (emailAlertDto.ecommerce()) {
             case AMAZON:
-                yield amazonFetcher.fetchProductPricing(dto.productUrl());
+                yield amazonFetcher.fetchProductPricing(emailAlertDto.productUrl());
         };
         if (scrapedProductDto.price().value() == -1) {
-            log.warn("Cannot fetch price [emailAlertId: {}, ecommerce: {}]", dto.alertId(), dto.ecommerce());
+            log.warn("Cannot fetch price [emailAlertId: {}, ecommerce: {}]", emailAlertDto.alertId(), emailAlertDto.ecommerce());
             return;
         }
-        scrapedProductRecordService.saveNewProductData(scrapedProductDto, dto);
+        scrapedProductRecordService.saveNewProductData(scrapedProductDto, emailAlertDto);
     }
 }
