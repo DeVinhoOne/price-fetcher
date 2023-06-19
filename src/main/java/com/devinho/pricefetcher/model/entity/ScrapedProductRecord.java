@@ -2,8 +2,7 @@ package com.devinho.pricefetcher.model.entity;
 
 import com.devinho.pricefetcher.model.dto.Currency;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,6 +10,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class ScrapedProductRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,4 +29,11 @@ public class ScrapedProductRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_alert_id")
     private EmailAlert emailAlert;
+
+    public ScrapedProductRecord(Double lastPrice, Currency currency, LocalDateTime createdAt, EmailAlert emailAlert) {
+        this.lastPrice = lastPrice;
+        this.currency = currency;
+        this.createdAt = createdAt;
+        this.emailAlert = emailAlert;
+    }
 }
